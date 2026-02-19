@@ -1,0 +1,28 @@
+@startuml
+actor "User (initiator)" as User
+actor "User (participant)" as Participant
+participant System
+database Database
+participant NotificationService
+
+User -> System : proposeAlternative(data)
+
+System -> Database : saveAlternative(data)
+Database --> System : OK
+
+System -> NotificationService : notifyParticipants()
+NotificationService --> System : sent
+
+alt Voting result = approved
+    Participant -> System : vote(approve)
+    System -> Database : updateStatus(approved)
+    Database --> System : OK
+else Voting result = rejected
+    Participant -> System : vote(reject)
+    System -> Database : updateStatus(rejected)
+    Database --> System : OK
+end
+
+System --> User : result notification
+
+@enduml

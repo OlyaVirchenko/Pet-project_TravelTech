@@ -1,0 +1,29 @@
+@startuml
+actor "Organizer" as Organizer
+participant System
+database Database
+participant NotificationService
+
+Organizer -> System : viewConflicts()
+
+System -> Database : getConflicts(tripId)
+Database --> System : conflictList
+
+Organizer -> System : resolveConflict(choice)
+
+alt Organizer selects version A
+    System -> Database : applyChange(versionA)
+    System -> Database : rejectOtherChanges()
+else Organizer selects version B
+    System -> Database : applyChange(versionB)
+    System -> Database : rejectOtherChanges()
+end
+
+Database --> System : OK
+
+System -> NotificationService : notifyParticipants()
+NotificationService --> System : sent
+
+System --> Organizer : confirmation
+
+@enduml

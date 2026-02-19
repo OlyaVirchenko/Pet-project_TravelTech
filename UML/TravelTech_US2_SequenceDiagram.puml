@@ -1,0 +1,24 @@
+@startuml
+actor User
+actor Participant
+participant System
+database Database
+participant NotificationService
+
+User -> System : addPlanItem(data)
+
+System -> Database : savePlanItem(data)
+Database --> System : OK
+
+System -> NotificationService : notifyParticipants(tripId)
+
+alt Voting process
+    Participant -> System : vote()
+    System -> Database : saveVote()
+    Database --> System : OK
+end
+
+System --> User : confirmation
+
+@enduml
+
